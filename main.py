@@ -3,8 +3,10 @@
 import tkinter as Tk
 from tkinter import *
 from tkinter.filedialog import askopenfilename
+from tkinter import messagebox
 import pygame as pygame
 from pygame import mixer
+import os
 
 
 #Functions for the Music
@@ -12,36 +14,48 @@ from pygame import mixer
 def chooseFile():
     #print("choose a file")
     chosenFile = askopenfilename(filetypes=[("All Files","*")])
-    print(chosenFile)
+    #print(chosenFile)
     #Destroys the window, will be used for 
-    root.destroy()
+   
 
 
     #For determining filetypes!
     if chosenFile.endswith('.wav'):
-        print('mp3')
-        audioFile()
+        mixer.init()
+        root.destroy()
+        #print('mp3')
+        audioFile(chosenFile)
     elif chosenFile.endswith('mp4'):
-        print('mp4')
-        videoFile()
+        root.destroy()
+        #print('mp4')
+        videoFile(chosenFile)
     else:
-        print('invalid file type')
-        
+        #print('invalid file type')
+        messagebox.showerror("Error", "Invalid file type. Please choose a \".wav\" or \".mp4\" file")
 
-def audioFile():
+
+def audioFile(chosenFile):
     print('hi')
     audio = Tk()
     audio.title("Shep's Audio Player")
     audio.geometry("1280x720")
     audio.configure(background="#FFFFFF")
+    
+
+    print(chosenFile)
+
+    sound = mixer.Sound(chosenFile)
+    sound.play()
+    
     audio.mainloop()
 
-def videoFile():
+def videoFile(chosenFile):
     video = Tk()
     video.title("Shep's Video Player")
     video.geometry("1280x720")
     video.configure(background="#FFFFFF")
     video.mainloop()
+
 
 
 
