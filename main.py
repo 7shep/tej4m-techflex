@@ -38,6 +38,8 @@ def audioFile(chosenFile):
 
     #Creates window for the audio file.
     audio = Tk()
+    icon = PhotoImage(file='./Images/icon.png')
+    audio.iconphoto(False, icon)
     audio.title("Shep's Audio Player")
     audio.geometry("1280x720")
     audio.configure(background="#FFFFFF")
@@ -58,6 +60,8 @@ def videoFile(chosenFile):
 
     #Video Gui!
     video = Tk()
+    icon = PhotoImage(file='./Images/icon.png')
+    video.iconphoto(False, icon)
     video.title("Shep's Video Player")
     video.geometry("1920x1080")
     video.configure(background="#FFFFFF")
@@ -78,7 +82,10 @@ def videoFile(chosenFile):
 
 #GUI FOR CHOOSE A FILE WINDOW!
 
+
 root = Tk()
+icon = PhotoImage(file='./Images/icon.png')
+root.iconphoto(False, icon)
 root.title("Shep's Tech Flex!!")
 root.geometry("485x485")
 root.configure(background="#BC13FE")
