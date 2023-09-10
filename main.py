@@ -7,10 +7,14 @@ from tkinter import messagebox
 from tkVideoPlayer import TkinterVideo
 import pygame as pygame
 from pygame import mixer
-import os
-
+import keyboard
+import threading
+import time
 
 #Functions for the Music
+
+#For pausing, using the same system as my last tech flex!
+num = 0
 
 def chooseFile():
     #print("choose a file")
@@ -79,9 +83,39 @@ def videoFile(chosenFile):
 
 
 
+#Detecting Space Key
+def spaceKey():
+    while True:
+        if keyboard.is_pressed('space'):
+            #print('Space key is pressed.') debug line
+            pauseFile()
+        time.sleep(0.1)
+
+#Threading runs this code in the background, target is the function. It is looking for the "spaceKey" function to be called.
+spacekeythread = threading.Thread(target=spaceKey)
+#Setting daemon to true allows me to exit the program.
+spacekeythread.daemon = True
+#Starts the threading
+spacekeythread.start()
+
+def pauseFile():
+    global num
+    num += 1
+    if mixer.get_busy():
+        if (num%2) == 0:
+            mixer.unpause()
+            print('Music Unpaused')
+        else:
+            mixer.pause()
+            print('Music paused')
+    else:
+        print('Music is not playing.')
+    print(num)
+
+
+
 
 #GUI FOR CHOOSE A FILE WINDOW!
-
 
 root = Tk()
 icon = PhotoImage(file='./Images/icon.png')
