@@ -11,7 +11,7 @@ import keyboard
 import threading
 import time
 
-#Functions for the Music
+#Functions for the Music & Video Player 
 
 #For pausing, using the same system as my last tech flex!
 num = 0
@@ -24,11 +24,13 @@ def chooseFile():
 
     #For determining filetypes!
     if chosenFile.endswith('.wav'):
+        rootkill = True
         mixer.init()
         root.destroy()
         #print('mp3') <-- Debug line
         audioFile(chosenFile)
     elif chosenFile.endswith('mp4'):
+        rootKill = True
         root.destroy()
         #print('mp4') <-- Debug line
         videoFile(chosenFile)
@@ -81,8 +83,6 @@ def videoFile(chosenFile):
     #Opens the GUI.
     video.mainloop()
 
-
-
 #Detecting Space Key
 def spaceKey():
     while True:
@@ -91,26 +91,28 @@ def spaceKey():
             pauseFile()
         time.sleep(0.1)
 
-#Threading runs this code in the background, target is the function. It is looking for the "spaceKey" function to be called.
-spacekeythread = threading.Thread(target=spaceKey)
-#Setting daemon to true allows me to exit the program.
-spacekeythread.daemon = True
-#Starts the threading
-spacekeythread.start()
-
 def pauseFile():
     global num
     num += 1
     if mixer.get_busy():
         if (num%2) == 0:
             mixer.unpause()
-            print('Music Unpaused')
+            #print('Music Unpaused')
         else:
             mixer.pause()
-            print('Music paused')
+            #print('Music paused')
     else:
         print('Music is not playing.')
-    print(num)
+    #print(num)
+
+def newFile():
+    global rootKill
+    while True:
+        if rootKill == True:
+            chosenFile = askopenfilename(filetypes=[("All Files","*")])
+            audioFile()
+        else:
+            messagebox.error("Play a file first ;)")
 
 
 
@@ -127,6 +129,19 @@ root.resizable(False, False)
 
 fileButton = Button(root, height = 100, width=100, bg="#BC13FE", text="Choose a File", command = chooseFile)
 fileButton.pack()
+
+#ALL THREADING FOR KEYBOARD FUNCTIONS!!
+
+#Threading runs this code in the background, target is the function. It is looking for the "spaceKey" function to be called.
+spacekeythread = threading.Thread(target=spaceKey)
+#Setting daemon to true allows me to exit the program.
+spacekeythread.daemon = True
+#Starts the threading
+spacekeythread.start()
+
+rewindthread = threading.Thread(target=newFile)
+rewindthread.daemon = True
+rewindthread.start()
 
 #Opens the "Choose File" Window.
 root.mainloop()
