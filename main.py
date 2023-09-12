@@ -17,6 +17,7 @@ import time
 num = 0
 
 def chooseFile():
+    global chosenFile
     #print("choose a file")
     chosenFile = askopenfilename(filetypes=[("All Files","*")])
     #print(chosenFile)
@@ -24,13 +25,12 @@ def chooseFile():
 
     #For determining filetypes!
     if chosenFile.endswith('.wav'):
-        rootkill = True
         mixer.init()
         root.destroy()
         #print('mp3') <-- Debug line
         audioFile(chosenFile)
+
     elif chosenFile.endswith('mp4'):
-        rootKill = True
         root.destroy()
         #print('mp4') <-- Debug line
         videoFile(chosenFile)
@@ -49,7 +49,9 @@ def audioFile(chosenFile):
     audio.title("Shep's Audio Player")
     audio.geometry("1280x720")
     audio.configure(background="#FFFFFF")
-    
+    img = PhotoImage(Image.open("./Images/ref.jpg"))
+    label = Label(audio, image = img)
+    label.pack()
 
     #print(chosenFile) <-- debug line.
 
@@ -57,11 +59,16 @@ def audioFile(chosenFile):
     sound = mixer.Sound(chosenFile)
     sound.play()
     
+    ##newFile = threading.Thread(target=newAudioFile)
+    #newFile.daemon = True
+    #newFile.start()
+
     #Opens the GUI.
     audio.mainloop()
 
-def videoFile(chosenFile):
 
+def videoFile(chosenFile):
+    global videoplayer
     #print('hiii) <-- Debug line.
 
     #Video Gui!
@@ -72,50 +79,59 @@ def videoFile(chosenFile):
     video.geometry("1920x1080")
     video.configure(background="#FFFFFF")
 
+    mixer.init()
     #Plays the MP4
     videoplayer = TkinterVideo(master=video, scaled=True)
     videoplayer.load(chosenFile)
     videoplayer.pack(expand=True, fill="both")
+    #videoplayer.audio.set_volume(0.5)
+
+    #videoSound = mixer.Sound(chosenFile)
+    #videoSound.play()
 
     videoplayer.play()
 
+    #newVideoFile = threading.Thread(target=newVideoFile(videoplayer))
+    #newVideoFile.daemon = True
+    #newVideoFile.start()
 
     #Opens the GUI.
     video.mainloop()
 
 #Detecting Space Key
-def spaceKey():
-    while True:
-        if keyboard.is_pressed('space'):
-            #print('Space key is pressed.') debug line
-            pauseFile()
-        time.sleep(0.1)
 
 def pauseFile():
     global num
+    global chosenFile
+    global videoplayer
+
     num += 1
-    if mixer.get_busy():
-        if (num%2) == 0:
-            mixer.unpause()
-            #print('Music Unpaused')
-        else:
-            mixer.pause()
-            #print('Music paused')
-    else:
-        print('Music is not playing.')
-    #print(num)
-
-def newFile():
-    global rootKill
     while True:
-        if rootKill == True:
-            chosenFile = askopenfilename(filetypes=[("All Files","*")])
-            audioFile()
-        else:
-            messagebox.error("Play a file first ;)")
+        if keyboard.is_pressed('space'):
+            if chosenFile.endswith('.wav'):
+                if mixer.get_busy():
+                    if (num % 2) == 0:
+                        mixer.unpause()
+                        #print('Music Unpaused')
+                    else:
+                        mixer.pause()
+                        #print('Music paused')
+                else:
+                    print('Music is not playing.')
+            elif chosenFile.endswith('.mp4'):
+                print(videoplayer.is_paused)
+        time.sleep(0.1)
+        
 
-
-
+#Changes the Audio file when R is pressed!
+##def newAudioFile():
+##    while True:
+  ##      if keyboard.is_pressed('r'):
+    ##        mixer.stop()
+      ##      newFile = askopenfilename(filetypes=[("Audio Files","*wav")])
+        ##    newSound = mixer.Sound(newFile)
+          ##  newSound.play()
+       ## time.sleep(0.1)
 
 #GUI FOR CHOOSE A FILE WINDOW!
 
@@ -133,15 +149,11 @@ fileButton.pack()
 #ALL THREADING FOR KEYBOARD FUNCTIONS!!
 
 #Threading runs this code in the background, target is the function. It is looking for the "spaceKey" function to be called.
-spacekeythread = threading.Thread(target=spaceKey)
+spacekeythread = threading.Thread(target=pauseFile)
 #Setting daemon to true allows me to exit the program.
 spacekeythread.daemon = True
 #Starts the threading
 spacekeythread.start()
-
-rewindthread = threading.Thread(target=newFile)
-rewindthread.daemon = True
-rewindthread.start()
 
 #Opens the "Choose File" Window.
 root.mainloop()
