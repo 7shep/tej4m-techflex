@@ -1,6 +1,7 @@
 #Welcome to Shep's TEJ4M Tech Flex! 
 
 import tkinter as Tk
+from tkinter import Tk, PhotoImage, Label
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter import messagebox
@@ -38,6 +39,11 @@ def chooseFile():
         #print('invalid file type') <-- Debug line
         messagebox.showerror("Error", "Invalid file type. Please choose a \".wav\" or \".mp4\" file")
 
+def resize_image(image_path, width, height):
+    img = PhotoImage(file=image_path)
+    img = img.subsample(int(img.width() / width), int(img.height() / height))
+    return img
+
 
 def audioFile(chosenFile):
     #print('hi') <-- Debug line.
@@ -47,25 +53,29 @@ def audioFile(chosenFile):
     icon = PhotoImage(file='./Images/icon.png')
     audio.iconphoto(False, icon)
     audio.title("Shep's Audio Player")
-    audio.geometry("1280x720")
+    audio.geometry("1920x1080")
     audio.configure(background="#FFFFFF")
-    img = PhotoImage(Image.open("./Images/ref.jpg"))
+    img = resize_image("./Images/def.png", width=1920, height=750)
     label = Label(audio, image = img)
     label.pack()
 
+    pauseButton = PhotoImage(file = './Images/media pause.png')
+    Button(audio, image=pauseButton, bg='#FFFFFF', command=pauseAudio, height = 60, width = 60).place(x=1500, y=599)
     #print(chosenFile) <-- debug line.
 
     #Plays the MP3 file.
     sound = mixer.Sound(chosenFile)
     sound.play()
     
-    ##newFile = threading.Thread(target=newAudioFile)
-    #newFile.daemon = True
-    #newFile.start()
+    newFile = threading.Thread(target=newAudioFile)
+    newFile.daemon = True
+    newFile.start()
 
     #Opens the GUI.
     audio.mainloop()
 
+def pauseAudio():
+    print('[ause]')
 
 def videoFile(chosenFile):
     global videoplayer
@@ -124,14 +134,14 @@ def pauseFile():
         
 
 #Changes the Audio file when R is pressed!
-##def newAudioFile():
-##    while True:
-  ##      if keyboard.is_pressed('r'):
-    ##        mixer.stop()
-      ##      newFile = askopenfilename(filetypes=[("Audio Files","*wav")])
-        ##    newSound = mixer.Sound(newFile)
-          ##  newSound.play()
-       ## time.sleep(0.1)
+def newAudioFile():
+    while True:
+            if keyboard.is_pressed('r'):
+                mixer.stop()
+                newFile = askopenfilename(filetypes=[("Audio Files","*wav")])
+                newSound = mixer.Sound(newFile)
+                newSound.play()
+            time.sleep(0.1)
 
 #GUI FOR CHOOSE A FILE WINDOW!
 
