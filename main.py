@@ -59,8 +59,12 @@ def audioFile(chosenFile):
     label = Label(audio, image = img)
     label.pack()
 
-    pauseButton = PhotoImage(file = './Images/media pause.png')
-    Button(audio, image=pauseButton, bg='#FFFFFF', command=pauseAudio, height = 60, width = 60).place(x=1500, y=599)
+    pauseButton = PhotoImage(file = './Images/palse.png')
+    Button(audio, image=pauseButton, bg='#FFFFFF', command=pauseAudio, height = 60, width = 60).place(x=1500, y=810)
+    
+    stopButton = PhotoImage(file='./Images/palse.png')
+    Button(audio, image=stopButton, bg='#FFFFFF', command=stopAudio, height=60, width=60).place(x=1250, y=810)
+    
     #print(chosenFile) <-- debug line.
 
     #Plays the MP3 file.
