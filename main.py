@@ -59,11 +59,11 @@ def audioFile(chosenFile):
     label = Label(audio, image = img)
     label.pack()
 
-    pauseButton = PhotoImage(file = './Images/palse.png')
-    Button(audio, image=pauseButton, bg='#FFFFFF', command=pauseAudio, height = 60, width = 60).place(x=1500, y=810)
+    pauseButton = PhotoImage(file = './Images/play.png')
+    Button(audio, image=pauseButton, bg='#FFFFFF', command=pauseAudio, height = 150, width = 150).place(x=1500, y=810)
     
-    stopButton = PhotoImage(file='./Images/palse.png')
-    Button(audio, image=stopButton, bg='#FFFFFF', command=stopAudio, height=60, width=60).place(x=1250, y=810)
+    stopButton = PhotoImage(file='./Images/stop1.png')
+    Button(audio, image=stopButton, bg='#FFFFFF', command=stopAudio, height=150, width=150).place(x=1250, y=810)
     
     #print(chosenFile) <-- debug line.
 
@@ -93,6 +93,7 @@ def videoFile(chosenFile):
     video.geometry("1920x1080")
     video.configure(background="#FFFFFF")
 
+
     mixer.init()
     #Plays the MP4
     videoplayer = TkinterVideo(master=video, scaled=True)
@@ -105,6 +106,12 @@ def videoFile(chosenFile):
 
     videoplayer.play()
 
+    videopause = Button(video, text="Pause/Play", command = videoPause)
+    videopause.pack()
+
+    videostop = Button(video, text="Stop Video", command=stopVideo)
+    videostop.pack()
+
     #newVideoFile = threading.Thread(target=newVideoFile(videoplayer))
     #newVideoFile.daemon = True
     #newVideoFile.start()
@@ -114,29 +121,44 @@ def videoFile(chosenFile):
 
 #Detecting Space Key
 
+def videoPause():
+    print('videopause')
+    if videoplayer.is_paused():
+        videoplayer.pause()
+    else:
+        videoplayer.play()
+
+def stopVideo():
+    print('videostop')
+    videoplayer.stop()
+
 def pauseFile():
     global num
     global chosenFile
     global videoplayer
 
-    num += 1
+    
     while True:
         if keyboard.is_pressed('space'):
             if chosenFile.endswith('.wav'):
                 if mixer.get_busy():
                     if (num % 2) == 0:
                         mixer.unpause()
-                        #print('Music Unpaused')
+                        print('Music Unpaused')
+                        num += 1
+                        
                     else:
                         mixer.pause()
-                        #print('Music paused')
+                        print('Music paused')
+                        num += 1
                 else:
                     print('Music is not playing.')
             elif chosenFile.endswith('.mp4'):
                 print(videoplayer.is_paused)
         time.sleep(0.1)
         
-
+def stopAudio():
+    print('stop')
 #Changes the Audio file when R is pressed!
 def newAudioFile():
     while True:
