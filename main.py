@@ -1,6 +1,6 @@
 #Welcome to Shep's TEJ4M Tech Flex! 
 
-import tkinter as Tk
+import tkinter as tk
 from tkinter import Tk, PhotoImage, Label
 from tkinter import *
 from tkinter.filedialog import askopenfilename
@@ -34,6 +34,7 @@ def chooseFile():
     elif chosenFile.endswith('mp4'):
         root.destroy()
         #print('mp4') <-- Debug line
+        
         videoFile(chosenFile)
     else:
         #print('invalid file type') <-- Debug line
@@ -56,7 +57,8 @@ def audioFile(chosenFile):
     audio.title("Shep's Audio Player")
     audio.geometry("1920x1080")
     audio.configure(background="#FFFFFF")
-    img = resize_image("./Images/def.png", width=1920, height=750)
+    img = resize_image("./Images/def.png", width=1920, height=800)
+    audio.state('zoomed')
     label = Label(audio, image = img)
     label.pack()
 
@@ -96,6 +98,7 @@ def audiobutton():
 def videoFile(chosenFile):
     global videoplayer
     global video
+
     #print('hiii) <-- Debug line.
 
     #Video Gui!
@@ -112,6 +115,7 @@ def videoFile(chosenFile):
     videoplayer = TkinterVideo(master=video, scaled=True)
     videoplayer.load(chosenFile)
     videoplayer.pack(expand=True, fill="both")
+    video.state('zoomed')
     #videoplayer.audio.set_volume(0.5)
 
     #videoSound = mixer.Sound(chosenFile)
@@ -120,17 +124,49 @@ def videoFile(chosenFile):
     videoplayer.play()
 
     videopause = Button(video, text="Pause/Play", command = videoPause)
-    videopause.pack()
+    videopause.pack(side='right')
 
     videostop = Button(video, text="Stop Video", command=stopVideo)
-    videostop.pack()
+    videostop.pack(side='right')
 
     #newVideoFile = threading.Thread(target=newVideoFile(videoplayer))
     #newVideoFile.daemon = True
     #newVideoFile.start()
 
+    #ULTIMATE EXTENSION
+
+
+    control_frame = tk.Frame(video)
+    control_frame.pack(side="bottom", fill="x")
+
+    progress_value = tk.IntVar(video)
+
+    progress_slider = tk.Scale(control_frame, variable=progress_value, from_=0, to=100, orient="horizontal", command=seek)
+    progress_slider.pack(side="left", fill="x", expand=True)
+    progress_slider.set(0)
+
+    video.state('zoomed')  # Make sure the video window is in zoomed state.
+
+    # Function to update the progress bar
+    def update_progress():
+        while videoplayer.is_playing():
+            current_position = videoplayer.get_current_position()
+            total_duration = videoplayer.get_duration()
+            progress_percent = (current_position / total_duration) * 100
+            progress_slider.set(progress_percent)
+            time.sleep(0.1)  # Update every 100 milliseconds
+
+    # Create a thread to update the progress bar
+    progress_thread = threading.Thread(target=update_progress)
+    progress_thread.daemon = True
+    progress_thread.start()
+
     #Opens the GUI.
     video.mainloop()
+
+def seek(value):
+    videoplayer.seek(int(value))
+
 
 #Detecting Space Key
 
@@ -150,7 +186,6 @@ def pauseFile():
     global num
     global chosenFile
     global videoplayer
-
     
     while True:
         if keyboard.is_pressed('space'):
@@ -171,6 +206,11 @@ def pauseFile():
                 print(videoplayer.is_paused)
         time.sleep(0.1)
         
+
+
+
+
+
 def stopAudio():
     mixer.stop()
     audio.destroy()
