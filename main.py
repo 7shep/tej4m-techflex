@@ -46,6 +46,7 @@ def resize_image(image_path, width, height):
 
 
 def audioFile(chosenFile):
+    global audio
     #print('hi') <-- Debug line.
 
     #Creates window for the audio file.
@@ -59,12 +60,12 @@ def audioFile(chosenFile):
     label = Label(audio, image = img)
     label.pack()
 
-    pauseButton = PhotoImage(file = './Images/play.png')
-    Button(audio, image=pauseButton, bg='#FFFFFF', command=pauseAudio, height = 150, width = 150).place(x=1500, y=810)
     
-    stopButton = PhotoImage(file='./Images/stop1.png')
-    Button(audio, image=stopButton, bg='#FFFFFF', command=stopAudio, height=150, width=150).place(x=1250, y=810)
+    audioPause = Button(audio, text="Pause/Play", command=audiobutton)
+    audioPause.pack()
     
+    audioStop =  Button(audio, text="Stop", command=stopAudio)
+    audioStop.pack()
     #print(chosenFile) <-- debug line.
 
     #Plays the MP3 file.
@@ -78,11 +79,23 @@ def audioFile(chosenFile):
     #Opens the GUI.
     audio.mainloop()
 
-def pauseAudio():
-    print('[ause]')
+def audiobutton():
+    global num
+    if chosenFile.endswith('.wav'):
+                if mixer.get_busy():
+                    if (num % 2) == 0:
+                        mixer.unpause()
+                        print('Music Unpaused')
+                        num += 1
+                        
+                    else:
+                        mixer.pause()
+                        print('Music paused')
+                        num += 1
 
 def videoFile(chosenFile):
     global videoplayer
+    global video
     #print('hiii) <-- Debug line.
 
     #Video Gui!
@@ -124,13 +137,14 @@ def videoFile(chosenFile):
 def videoPause():
     print('videopause')
     if videoplayer.is_paused():
-        videoplayer.pause()
-    else:
         videoplayer.play()
+    else:
+        videoplayer.pause()
 
 def stopVideo():
     print('videostop')
     videoplayer.stop()
+    video.destroy()
 
 def pauseFile():
     global num
@@ -158,7 +172,9 @@ def pauseFile():
         time.sleep(0.1)
         
 def stopAudio():
-    print('stop')
+    mixer.stop()
+    audio.destroy()
+    
 #Changes the Audio file when R is pressed!
 def newAudioFile():
     while True:
