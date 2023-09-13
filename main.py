@@ -149,11 +149,17 @@ def videoFile(chosenFile):
 
     # Function to update the progress bar
     def update_progress():
-        while videoplayer.is_playing():
+        while True:
             current_position = videoplayer.get_current_position()
             total_duration = videoplayer.get_duration()
             progress_percent = (current_position / total_duration) * 100
             progress_slider.set(progress_percent)
+             # Determine the color based on progress
+            if progress_percent < 100:
+                progress_slider.config(color="#FFFFFF")
+            else:
+                progress_slider.config(troughcolor="dark gray")
+            
             time.sleep(0.1)  # Update every 100 milliseconds
 
     # Create a thread to update the progress bar
